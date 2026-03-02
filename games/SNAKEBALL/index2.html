@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Classic Snake Ball</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+
+    <h1>CLASSIC SNAKE BALL</h1>
+
+    <div class="scoreboard">
+        <span>Score: <span id="score">0</span></span>
+        <span>High Score: <span id="highScore">0</span></span>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+    <div id="gameOverBox" class="hidden">
+    <div class="box">
+        <h2>GAME OVER</h2>
+        <p>⏱ Survived: <span id="timeAlive">0</span> sec</p>
+        <p>💀 Your Score: <span id="finalScore">0</span></p>
+        <p>🏆 High Score: <span id="finalHighScore">0</span></p>
+        <button onclick="restartGame()">PLAY AGAIN</button>
+    </div>
+</div>
+
+    <div class="controls">
+        
+    </div>
+
+    
+
+    <script src="script2.js"></script>
+</body>
+</html>

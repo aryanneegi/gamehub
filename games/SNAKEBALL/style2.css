@@ -1,0 +1,110 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
+body {
+    background-color: #000000;   /* Black background */
+    font-family: monospace;
+    text-align: center;
+    color: #00aa00;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Title */
+h1 {
+    margin-top: 25px;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: #00ff00;
+}
+
+/* Scoreboard */
+.scoreboard {
+    margin: 15px 0; 
+    font-size: 18px;
+    display: flex;
+    gap: 50px;
+    color: #d41818;
+}
+
+/* Canvas (Game Area) */
+canvas {
+    background-color: #e02727;     /* Black game background */
+    border: 6px solid #f1e9e9;     /* Green border */
+    
+    display: block;
+}
+
+/* Controls Text */
+.controls {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #009900;
+    letter-spacing: 1px;
+}
+/* Overlay Background */
+#gameOverBox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.4s ease;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Popup Box */
+.box {
+    background: #111;
+    border: 3px solid #00ff00;
+    padding: 30px 50px;
+    text-align: center;
+    color: #00ff00;
+    box-shadow: 0 0 25px #00ff00;
+    border-radius: 10px;
+    animation: pop 0.3s ease;
+}
+
+.box h2 {
+    margin-bottom: 20px;
+    letter-spacing: 3px;
+}
+
+.box p {
+    margin: 10px 0;
+}
+
+.box button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #00ff00;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.box button:hover {
+    background: #00cc00;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pop {
+    from { transform: scale(0.7); }
+    to { transform: scale(1); }
+}
