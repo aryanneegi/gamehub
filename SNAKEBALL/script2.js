@@ -24,6 +24,13 @@ let highScore = localStorage.getItem("nokiaHighScore") || 0;
 let speed;
 let gameInterval;
 
+/* GAME SOUNDS */
+
+let eatSound = new Audio("sounds/eat.mp3");
+let bounceSound = new Audio("sounds/bounce.mp3");
+let hitSound = new Audio("sounds/hit.mp3");
+let gameOverSound = new Audio("sounds/gameover.mp3");
+
 
 /* MOBILE TOUCH CONTROLS  */
 
@@ -129,10 +136,14 @@ function moveSnake() {
     if (head.y >= ROWS) head.y = 0;
 
     snake.unshift(head);
+    bounceSound.currentTime = 0;
+    bounceSound.play();
 
     // Eat food
     if (head.x === food.x && head.y === food.y) {
         score += 10;
+        eatSound.currentTime = 0;
+        eatSound.play();
 
         if (speed > 60) {
             speed -= 5;
@@ -155,6 +166,8 @@ function checkCollision() {
 
     for (let i = 1; i < snake.length; i++) {
         if (head.x === snake[i].x && head.y === snake[i].y) {
+            hitSound.currentTime = 0;
+            hitSound.play();
             return true;
         }
     }
@@ -250,6 +263,8 @@ function updateScore() {
 }
 function gameOver() {
     clearInterval(gameInterval);
+    gameOverSound.currentTime = 0;
+    gameOverSound.play();
 
     const survivalTime = Math.floor((Date.now() - startTime) / 1000);
 

@@ -3,6 +3,13 @@ const ctx = canvas.getContext("2d");
 
 const startBtn = document.getElementById("startBtn");
 const restartBtn = document.getElementById("restartBtn");
+/* GAME SOUNDS */
+
+let brickSound = new Audio("sounds/hit.mp3");
+let paddleSound = new Audio("sounds/bounce.mp3");
+let wallSound = new Audio("sounds/bounce.mp3");
+let gameOverSound = new Audio("sounds/gameover.mp3");
+
 
 /* ---------------- BUTTON STYLE ---------------- */
 
@@ -48,6 +55,22 @@ let score = 0;
 
 let rightPressed = false;
 let leftPressed = false;
+
+/* MOBILE TOUCH CONTROLS FOR PADDLE */
+document.addEventListener("touchmove", movePaddle);
+
+    function movePaddle(event){
+
+        const touch = event.touches[0];
+        let touchX = touch.clientX;
+        paddleX = touchX - paddleWidth / 2;
+    }
+    /* PREVENT PAGE SCROLL WHILE PLAYING */
+
+document.body.addEventListener("touchmove", function(e){
+    e.preventDefault();
+}, { passive:false });
+
 
 // FIX 1: Use a reverseControls flag instead of swapping key states
 let reverseControls = false;
@@ -174,6 +197,8 @@ function collideWithBricks(ball) {
                     ball.y < b.y + brickHeight
                 ) {
                     ball.dy = -ball.dy;
+                    brickSound.currentTime = 0;
+                    brickSound.play();
                     b.status = 0;
                     score++;
                     activeBricks--;
@@ -329,13 +354,20 @@ function draw() {
         if (!ball.stuck) {
 
             if (ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius)
+             {  wallSound.currentTime = 0;
+                wallSound.play();
                 ball.dx = -ball.dx;
+            }
 
             if (ball.y + ball.dy < ball.radius) {
+                wallSound.currentTime = 0;
+                wallSound.play();
                 ball.dy = -ball.dy;
             } else if (ball.y + ball.dy > canvas.height - ball.radius) {
 
                 if (ball.x > paddleX && ball.x < paddleX + paddleWidth) {
+                    paddleSound.currentTime = 0;
+                    paddleSound.play();
                     ball.dy = -ball.dy;
                 } else {
                     balls.splice(index, 1);
@@ -399,6 +431,9 @@ function draw() {
 /* ---------------- GAME OVER ---------------- */
 
 function showGameOver(isWin = false) {
+    gameOverSound.currentTime = 0;
+    gameOverSound.play();
+
     cancelAnimationFrame(animationId);
     clearInterval(powerInterval);
 
