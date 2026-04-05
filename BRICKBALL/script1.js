@@ -3,12 +3,29 @@ const ctx = canvas.getContext("2d");
 
 const startBtn = document.getElementById("startBtn");
 const restartBtn = document.getElementById("restartBtn");
+function resizeCanvas() {
+    const maxW = Math.min(window.innerWidth - 20, 760);
+    const maxH = Math.min(window.innerHeight * 0.75, 580);
+    canvas.width  = maxW;
+    canvas.height = maxH;
+}
+resizeCanvas();
+function getBrickLayout() {
+    const cols       = canvas.width < 420 ? 6 : 10;
+    const rows       = 8;
+    const padding    = 6;
+    const offsetLeft = canvas.width < 420 ? 10 : 35;
+    const offsetTop  = 80;
+    const bW = Math.floor((canvas.width - offsetLeft * 2 - padding * (cols - 1)) / cols);
+    const bH = canvas.width < 420 ? 16 : 20;
+    return { cols, rows, bW, bH, padding, offsetLeft, offsetTop };
+}
 /* GAME SOUNDS */
 
-let brickSound = new Audio("sounds/hit.mp3");
-let paddleSound = new Audio("sounds/bounce.mp3");
-let wallSound = new Audio("sounds/bounce.mp3");
-let gameOverSound = new Audio("sounds/gameover.mp3");
+let brickSound    = new Audio("../sounds/hit.mp3");
+let paddleSound   = new Audio("../sounds/bounce.mp3");
+let wallSound     = new Audio("../sounds/bounce.mp3");
+let gameOverSound = new Audio("../sounds/gameover.mp3");
 
 
 /* ---------------- BUTTON STYLE ---------------- */
@@ -57,19 +74,39 @@ let rightPressed = false;
 let leftPressed = false;
 
 /* MOBILE TOUCH CONTROLS FOR PADDLE */
-document.addEventListener("touchmove", movePaddle);
+function movePaddle(event) {
+    const touch  = event.touches[0];
+    const rect   = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const touchX = (touch.clientX - rect.left) * scaleX;
+    paddleX = touchX - paddleWidth / 2;
+    if (paddleX < 0) paddleX = 0;
+    if (paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
 
-    function movePaddle(event){
-
-        const touch = event.touches[0];
-        let touchX = touch.clientX;
-        paddleX = touchX - paddleWidth / 2;
+    if (waitingForServe && serveReady) {
+        balls.forEach(ball => ball.stuck = false);
+        waitingForServe = false;
+        serveReady      = false;
+        if (!timerStarted) {
+            startTime    = Date.now();
+            timerStarted = true;
+        }
     }
-    /* PREVENT PAGE SCROLL WHILE PLAYING */
+}
 
-document.body.addEventListener("touchmove", function(e){
+canvas.addEventListener("touchstart", (e) => {
     e.preventDefault();
-}, { passive:false });
+    if (waitingForServe && !serveReady) serveReady = true;
+}, { passive: false });
+
+canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    movePaddle(e);
+}, { passive: false });
+
+document.body.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+}, { passive: false });
 
 
 // FIX 1: Use a reverseControls flag instead of swapping key states
@@ -198,7 +235,7 @@ function collideWithBricks(ball) {
                 ) {
                     ball.dy = -ball.dy;
                     brickSound.currentTime = 0;
-                    brickSound.play();
+                    brickSound.play().catch(() => {});
                     b.status = 0;
                     score++;
                     activeBricks--;
@@ -217,6 +254,16 @@ function collideWithBricks(ball) {
 function drawPaddle() {
     ctx.fillStyle = "#00ffff";
     ctx.fillRect(paddleX, canvas.height - paddleHeight - 5, paddleWidth, paddleHeight);
+}
+function drawServeHint() {
+    if (!waitingForServe) return;
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.font = "16px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    ctx.fillText(isMobile ? "TOUCH & DRAG TO LAUNCH" : "PRESS \u2190 \u2192 TO LAUNCH",
+                 canvas.width / 2, canvas.height - 50);
 }
 
 function drawHUD() {
@@ -294,8 +341,9 @@ startBtn.addEventListener("click", () => {
     gameOver = false;
     reverseControls = false;
 
-    paddleWidth = 100;
-    paddleX = canvas.width / 2 - 50;
+    resizeCanvas();
+    paddleWidth = canvas.width < 420 ? 80 : 100;
+    paddleX     = canvas.width / 2 - paddleWidth / 2;
 
     balls = [{
         x: paddleX + paddleWidth / 2,
@@ -336,6 +384,7 @@ function draw() {
     drawHUD();
     drawPowerBall();
     drawPaddle();
+    drawServeHint();
 
     // FIX 5: Iterate balls in reverse to safely splice without skipping entries
     for (let index = balls.length - 1; index >= 0; index--) {
@@ -355,19 +404,19 @@ function draw() {
 
             if (ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius)
              {  wallSound.currentTime = 0;
-                wallSound.play();
+                wallSound.play().catch(() => {});
                 ball.dx = -ball.dx;
             }
 
             if (ball.y + ball.dy < ball.radius) {
                 wallSound.currentTime = 0;
-                wallSound.play();
+                wallSound.play().catch(() => {});
                 ball.dy = -ball.dy;
             } else if (ball.y + ball.dy > canvas.height - ball.radius) {
 
                 if (ball.x > paddleX && ball.x < paddleX + paddleWidth) {
                     paddleSound.currentTime = 0;
-                    paddleSound.play();
+                    paddleSound.play().catch(() => {});
                     ball.dy = -ball.dy;
                 } else {
                     balls.splice(index, 1);
@@ -432,7 +481,7 @@ function draw() {
 
 function showGameOver(isWin = false) {
     gameOverSound.currentTime = 0;
-    gameOverSound.play();
+    gameOverSound.play().catch(() => {});
 
     cancelAnimationFrame(animationId);
     clearInterval(powerInterval);
