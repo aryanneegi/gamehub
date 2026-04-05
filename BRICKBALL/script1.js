@@ -96,7 +96,6 @@ function movePaddle(event) {
 
 canvas.addEventListener("touchstart", (e) => {
     e.preventDefault();
-    if (waitingForServe && !serveReady) serveReady = true;
 }, { passive: false });
 
 canvas.addEventListener("touchmove", (e) => {
@@ -137,9 +136,10 @@ let bricks = [];
 
 function initBricks() {
     bricks = [];
-    for (let c = 0; c < brickColumnCount; c++) {
+    const { cols, rows } = getBrickLayout();
+    for (let c = 0; c < cols; c++) {
         bricks[c] = [];
-        for (let r = 0; r < brickRowCount; r++) {
+        for (let r = 0; r < rows; r++) {
             bricks[c][r] = { x: 0, y: 0, status: 1 };
         }
     }
@@ -196,18 +196,16 @@ function applyPower(type) {
 /* ---------------- DRAW FUNCTIONS ---------------- */
 
 function drawBricks() {
-    for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
+    const { cols, rows, bW, bH, padding, offsetLeft, offsetTop } = getBrickLayout();
+    for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
             if (bricks[c][r].status === 1) {
-
-                let brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
-                let brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
-
+                let brickX = c * (bW + padding) + offsetLeft;
+                let brickY = r * (bH + padding) + offsetTop;
                 bricks[c][r].x = brickX;
                 bricks[c][r].y = brickY;
-
                 ctx.fillStyle = "#00ffff";
-                ctx.fillRect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillRect(brickX, brickY, bW, bH);
             }
         }
     }
@@ -215,23 +213,22 @@ function drawBricks() {
 
 // FIX 4: Count total active bricks first, then detect collision — prevents false win triggers
 function collideWithBricks(ball) {
-    // Count all active bricks before checking this ball's collision
+    const { cols, rows, bW, bH } = getBrickLayout();
     let activeBricks = 0;
-    for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
+    for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
             if (bricks[c][r].status === 1) activeBricks++;
         }
     }
-
-    for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
+    for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
             let b = bricks[c][r];
             if (b.status === 1) {
                 if (
                     ball.x > b.x &&
-                    ball.x < b.x + brickWidth &&
+                    ball.x < b.x + bW &&
                     ball.y > b.y &&
-                    ball.y < b.y + brickHeight
+                    ball.y < b.y + bH
                 ) {
                     ball.dy = -ball.dy;
                     brickSound.currentTime = 0;
@@ -355,7 +352,7 @@ startBtn.addEventListener("click", () => {
     }];
 
     waitingForServe = true;
-    serveReady = false;
+    // serveReady = false;
 
     timerStarted = false;
     elapsedTime = 0;
@@ -460,21 +457,14 @@ function draw() {
         paddleX -= 7;
 
     // Once all keys are released after a life loss, allow serving again
-    if (waitingForServe && !serveReady && !rightPressed && !leftPressed) {
-        serveReady = true;
+    if (waitingForServe && (rightPressed || leftPressed)) {
+    balls.forEach(ball => ball.stuck = false);
+    waitingForServe = false;
+    if (!timerStarted) {
+        startTime = Date.now();
+        timerStarted = true;
     }
-
-    if (waitingForServe && serveReady && (rightPressed || leftPressed)) {
-
-        balls.forEach(ball => ball.stuck = false);
-        waitingForServe = false;
-        serveReady = false;
-
-        if (!timerStarted) {
-            startTime = Date.now();
-            timerStarted = true;
-        }
-    }
+}
 }
 
 /* ---------------- GAME OVER ---------------- */
