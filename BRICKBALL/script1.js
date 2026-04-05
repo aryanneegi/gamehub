@@ -83,7 +83,7 @@ function movePaddle(event) {
     if (paddleX < 0) paddleX = 0;
     if (paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
 
-    if (waitingForServe && serveReady) {
+    if (waitingForServe) {
         balls.forEach(ball => ball.stuck = false);
         waitingForServe = false;
         serveReady      = false;
