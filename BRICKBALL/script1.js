@@ -83,7 +83,7 @@ function movePaddle(event) {
     if (paddleX < 0) paddleX = 0;
     if (paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
 
-    if (waitingForServe) {
+    if (waitingForServe && !isPaused) {
         balls.forEach(ball => ball.stuck = false);
         waitingForServe = false;
         // serveReady      = false;
@@ -113,6 +113,7 @@ let reverseControls = false;
 
 let gameOver = false;
 let waitingForServe = false;
+let isPaused = false;
 let serveReady = false; // true only after keys are fully released post-life-loss
 
 let startTime = 0;
@@ -427,6 +428,7 @@ function draw() {
                         } else {
                             const speed = canvas.width < 420 ? 3 : 4;
                             cancelAnimationFrame(animationId);
+                            isPaused = true;
                             paddleX = canvas.width / 2 - paddleWidth / 2;
 
 // show paused state during 1 second break
@@ -451,6 +453,7 @@ function draw() {
                                 stuck: true
                                 });
                             waitingForServe = true;
+                            isPaused = false;
                             draw();
                         }, 1000);
                                     
