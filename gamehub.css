@@ -2,6 +2,7 @@
     --neon-cyan: #00f5ff;
     --neon-pink: #ff006e;
     --neon-green: #39ff14;
+    --neon-orange: #f59e0b; /* ✅ added */
     --dark: #050508;
     --card-bg: rgba(255,255,255,0.03);
 }
@@ -147,17 +148,19 @@ h1 .text-glow {
     animation: fadeUp 0.8s ease both;
 }
 
+/* Cards */
 .game-card:nth-child(1) { animation-delay: 0.3s; --card-accent: var(--neon-cyan); }
 .game-card:nth-child(2) { animation-delay: 0.45s; --card-accent: var(--neon-pink); }
+.game-card:nth-child(3) { animation-delay: 0.6s; --card-accent: var(--neon-green); }
+.game-card:nth-child(4) { animation-delay: 0.75s; --card-accent: var(--neon-orange); }
 
-/* ✅ ADDED: 3rd card (Memory Match) */
-.game-card:nth-child(3) { 
-    animation-delay: 0.6s; 
-    --card-accent: var(--neon-green); 
+/* EXTRA enhancement ONLY for 4th card */
+.game-card:nth-child(4)::before {
+    box-shadow: 0 0 20px var(--neon-orange), 0 0 40px rgba(245,158,11,0.6);
 }
-.game-card:nth-child(4) { 
-    animation-delay: 0.75s; 
-    --card-accent: #f59e0b; /* orange/yellow */
+
+.game-card:nth-child(4):hover {
+    box-shadow: 0 0 25px rgba(245,158,11,0.2);
 }
 
 @keyframes fadeUp {
@@ -263,7 +266,7 @@ h1 .text-glow {
 }
 .play-btn:hover .arrow { transform: translateX(4px); }
 
-/* Stats row */
+/* Stats */
 .card-stats {
     display: flex;
     gap: 20px;
@@ -296,7 +299,7 @@ footer {
     text-transform: uppercase;
 }
 
-/* Scanline effect */
+/* Scanline */
 .scanline {
     position: fixed;
     inset: 0;
@@ -311,6 +314,7 @@ footer {
     z-index: 100;
 }
 
+/* Responsive */
 @media (max-width: 768px){
 
 header{
