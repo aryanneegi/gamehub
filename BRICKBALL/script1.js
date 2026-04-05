@@ -431,31 +431,34 @@ function draw() {
                             isPaused = true;
                             paddleX = canvas.width / 2 - paddleWidth / 2;
 
-// show paused state during 1 second break
-                            ctx.fillStyle = "black";
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-                            drawBricks();
-                            drawHUD();
-                            drawPaddle();
-                            ctx.fillStyle = "rgba(255,255,255,0.6)";
-                            ctx.font = "20px Arial";
-                            ctx.textAlign = "center";
-                            ctx.textBaseline = "middle";
-                            ctx.fillText("LIFE LOST! Get Ready...", canvas.width / 2, canvas.height / 2);
-
-                            setTimeout(() => {
                             balls.push({
                                 x: paddleX + paddleWidth / 2,
                                 y: canvas.height - paddleHeight - 15,
                                 dx: speed,
                                 dy: -speed,
                                 radius: 8,
-                                stuck: true
-                                });
-                            waitingForServe = true;
-                            isPaused = false;
-                            draw();
-                        }, 1000);
+                               stuck: true
+          });
+
+// draw once to show ball on paddle immediately
+ctx.fillStyle = "black";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+drawBricks();
+drawHUD();
+drawPaddle();
+
+// draw ball on paddle
+ctx.beginPath();
+ctx.arc(paddleX + paddleWidth / 2, canvas.height - paddleHeight - 15, 8, 0, Math.PI * 2);
+ctx.fillStyle = "red";
+ctx.fill();
+
+setTimeout(() => {
+    waitingForServe = true;
+    isPaused = false;
+    draw();
+}, 500);
+                            
                                     
                             // serveReady = false; // require fresh key press to serve
                         }
