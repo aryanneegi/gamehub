@@ -426,6 +426,22 @@ function draw() {
                             return;
                         } else {
                             const speed = canvas.width < 420 ? 3 : 4;
+                            cancelAnimationFrame(animationId);
+                            paddleX = canvas.width / 2 - paddleWidth / 2;
+
+// show paused state during 1 second break
+                            ctx.fillStyle = "black";
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            drawBricks();
+                            drawHUD();
+                            drawPaddle();
+                            ctx.fillStyle = "rgba(255,255,255,0.6)";
+                            ctx.font = "20px Arial";
+                            ctx.textAlign = "center";
+                            ctx.textBaseline = "middle";
+                            ctx.fillText("LIFE LOST! Get Ready...", canvas.width / 2, canvas.height / 2);
+
+                            setTimeout(() => {
                             balls.push({
                                 x: paddleX + paddleWidth / 2,
                                 y: canvas.height - paddleHeight - 15,
@@ -433,9 +449,12 @@ function draw() {
                                 dy: -speed,
                                 radius: 8,
                                 stuck: true
-                    });
+                                });
                             waitingForServe = true;
-                            serveReady = false; // require fresh key press to serve
+                            draw();
+                        }, 1000);
+                                    
+                            // serveReady = false; // require fresh key press to serve
                         }
                     }
                 }
