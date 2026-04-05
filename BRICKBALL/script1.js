@@ -86,7 +86,7 @@ function movePaddle(event) {
     if (waitingForServe) {
         balls.forEach(ball => ball.stuck = false);
         waitingForServe = false;
-        serveReady      = false;
+        // serveReady      = false;
         if (!timerStarted) {
             startTime    = Date.now();
             timerStarted = true;
@@ -342,14 +342,15 @@ startBtn.addEventListener("click", () => {
     paddleWidth = canvas.width < 420 ? 80 : 100;
     paddleX     = canvas.width / 2 - paddleWidth / 2;
 
+    const speed = canvas.width < 420 ? 3 : 4;
     balls = [{
-        x: paddleX + paddleWidth / 2,
-        y: canvas.height - paddleHeight - 15,
-        dx: 4,
-        dy: -4,
-        radius: 8,
-        stuck: true
-    }];
+    x: paddleX + paddleWidth / 2,
+    y: canvas.height - paddleHeight - 15,
+    dx: speed,
+    dy: -speed,
+    radius: 8,
+    stuck: true
+}];
 
     waitingForServe = true;
     // serveReady = false;
@@ -424,14 +425,15 @@ function draw() {
                             showGameOver();
                             return;
                         } else {
+                            const speed = canvas.width < 420 ? 3 : 4;
                             balls.push({
                                 x: paddleX + paddleWidth / 2,
                                 y: canvas.height - paddleHeight - 15,
-                                dx: 4,
-                                dy: -4,
+                                dx: speed,
+                                dy: -speed,
                                 radius: 8,
                                 stuck: true
-                            });
+                    });
                             waitingForServe = true;
                             serveReady = false; // require fresh key press to serve
                         }
