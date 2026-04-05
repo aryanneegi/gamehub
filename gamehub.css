@@ -156,8 +156,8 @@ h1 .text-glow {
     --card-accent: var(--neon-green); 
 }
 .game-card:nth-child(4) { 
-    animation-delay: 0.6s; 
-    --card-accent: var(--blue); 
+    animation-delay: 0.75s; 
+    --card-accent: #f59e0b; /* orange/yellow */
 }
 
 @keyframes fadeUp {
